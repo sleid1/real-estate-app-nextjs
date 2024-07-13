@@ -19,6 +19,7 @@ import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import FileUpload from "../_components/FileUpload";
 
 const EditListing = ({ params }) => {
    const { toast } = useToast();
@@ -103,8 +104,8 @@ const EditListing = ({ params }) => {
 
          <Formik
             initialValues={{
-               type: "",
-               propertyType: "",
+               type: listing.type,
+               propertyType: listing.propertyType,
             }}
             onSubmit={(values) => {
                console.log(values);
@@ -265,6 +266,14 @@ const EditListing = ({ params }) => {
                            />
                         </div>
                      </div>
+
+                     <div>
+                        <h2 className="font-lg text-gray-500 my-2">
+                           Upload Property Images
+                        </h2>
+                        <FileUpload />
+                     </div>
+
                      <div className="flex gap-7 justify-end">
                         <Button
                            variant="outline"
