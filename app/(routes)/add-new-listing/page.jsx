@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/utils/supabase/client";
 import { useUser } from "@clerk/nextjs";
 import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "sonner";
+import { useToast } from "@/components/ui/use-toast";
 
 const AddNewListing = () => {
+   const { toast } = useToast();
    const [selectedAddress, setSelectedAddress] = useState();
    const [coordinates, setCoordinates] = useState();
    const { user } = useUser();
+   const router = useRouter();
 
    const [loader, setLoader] = useState(false);
 
@@ -30,14 +33,22 @@ const AddNewListing = () => {
 
       if (data) {
          setLoader(false);
-         console.log("New Data added", data);
-         toast("New Address added for listing !");
+         console.log("New Data added,", data);
+         toast({
+            title: "Success !",
+            description: "New Address added for listing !",
+         });
+         router.replace(`/edit-listing/${data[0].id}`);
       }
 
       if (error) {
          setLoader(false);
          console.log("Error", error);
-         toast("Sorry, there was a Server Side Error. Please try again later.");
+         toast({
+            title: "Error !",
+            description: error.message,
+            variant: "destructive",
+         });
       }
    };
 
