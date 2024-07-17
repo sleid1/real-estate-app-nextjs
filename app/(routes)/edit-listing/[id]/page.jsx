@@ -23,20 +23,31 @@ import FileUpload from "../_components/FileUpload";
 
 const EditListing = ({ params }) => {
    const { toast } = useToast();
-   const { user } = useUser();
+   const { user, isLoaded } = useUser();
    const router = useRouter();
 
-   const [listing, setListing] = useState();
+   const [listing, setListing] = useState(null);
+   const [images, setImages] = useState([]);
+   const [loading, setLoading] = useState(false);
 
    useEffect(() => {
-      user && verifyUserRecord();
+      if (!isLoaded) {
+         return;
+      }
+
+      if (!user) {
+         router.replace(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL);
+         return;
+      }
+
+      verifyUserRecord();
    }, [user]);
 
    const verifyUserRecord = async () => {
       try {
          const { data, error } = await supabase
             .from("listing")
-            .select("*")
+            .select("*, listingImages (listing_id, url)")
             .eq("createdBy", user?.primaryEmailAddress.emailAddress)
             .eq("id", params.id);
 
@@ -45,6 +56,7 @@ const EditListing = ({ params }) => {
          }
 
          if (data && data.length > 0) {
+            console.log(data);
             setListing(data[0]);
          } else {
             router.replace("/");
@@ -61,6 +73,7 @@ const EditListing = ({ params }) => {
 
    const onSubmitHandler = async (formValues) => {
       try {
+         setLoading(true);
          const { data, error } = await supabase
             .from("listing")
             .update(formValues)
@@ -77,9 +90,41 @@ const EditListing = ({ params }) => {
                description: "Listing updated and published !",
             });
          }
+
+         if (images.length > 0) {
+            for (const image of images) {
+               const file = image;
+               const fileName =
+                  user?.primaryEmailAddress.emailAddress +
+                  " - " +
+                  new Date().toLocaleString("hr");
+               const fileExtension = file.name.split(".").pop();
+               const { data, error } = await supabase.storage
+                  .from("listingImages")
+                  .upload(`${fileName}`, file, {
+                     contentType: `image/${fileExtension}`,
+                     upsert: false,
+                  });
+
+               if (error) {
+                  toast({
+                     title: "Error",
+                     description: "Failed to upload files. Please try again.",
+                     variant: "destructive",
+                  });
+               } else {
+                  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL + fileName;
+
+                  const { data, error } = await supabase
+                     .from("listingImages")
+                     .insert([{ url: imageUrl, listing_id: params.id }])
+                     .select();
+               }
+            }
+         }
+         setLoading(false);
       } catch (error) {
          console.error("Error updating listing:", error.message);
-         // Handle error: show message to user or log for debugging
          toast({
             title: "Error",
             description: "Failed to update listing. Please try again.",
@@ -115,6 +160,16 @@ const EditListing = ({ params }) => {
             {({ values, handleChange, handleSubmit, setFieldValue }) => (
                <form onSubmit={handleSubmit}>
                   <div className="p-5 border rounded-lg shadow-md grid gap-7 mt-6">
+                     <div className="flex gap-2 flex-col">
+                        <h2 className="text-gray-500">Property name</h2>
+                        <Input
+                           type="text"
+                           placeholder="Luxury Villa With Sea View"
+                           defaultValue={listing?.name}
+                           name="name"
+                           onChange={handleChange}
+                        />
+                     </div>
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                         <div className="flex flex-col gap-2">
                            <h2 className="text-gray-500">Rent or Sell ?</h2>
@@ -271,18 +326,31 @@ const EditListing = ({ params }) => {
                         <h2 className="font-lg text-gray-500 my-2">
                            Upload Property Images
                         </h2>
-                        <FileUpload />
+                        <FileUpload
+                           setImages={(value) => setImages(value)}
+                           imageList={listing.listingImages}
+                        />
                      </div>
 
                      <div className="flex gap-7 justify-end">
                         <Button
                            variant="outline"
+                           disabled={loading}
+                           type="submit"
                            className="text-primary border-primary"
                         >
-                           Save
+                           {loading ? (
+                              <LoaderCircle className="animate-spin" />
+                           ) : (
+                              "Save"
+                           )}
                         </Button>
-                        <Button type="submit" className="">
-                           Save & Publish
+                        <Button disabled={loading} type="submit" className="">
+                           {loading ? (
+                              <LoaderCircle className="animate-spin" />
+                           ) : (
+                              "Save & Publish"
+                           )}
                         </Button>
                      </div>
                   </div>

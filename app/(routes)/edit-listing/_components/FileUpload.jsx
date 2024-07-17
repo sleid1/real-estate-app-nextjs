@@ -1,11 +1,12 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const FileUpload = () => {
+const FileUpload = ({ setImages, imageList }) => {
    const [imagePreview, setImagePreview] = useState([]);
 
    const handleFileUpload = (e) => {
       const files = e.target.files;
+      setImages(files);
       const previews = Array.from(files).map((file) =>
          URL.createObjectURL(file)
       );
@@ -50,22 +51,40 @@ const FileUpload = () => {
                   multiple
                   className="hidden"
                   onChange={handleFileUpload}
+                  accept="image/png, image/gif, image/jpeg"
                />
             </label>
          </div>
-         <div>
-            {imagePreview.map((image, index) => (
-               <div key={index}>
-                  <Image
-                     src={image}
-                     width={100}
-                     height={100}
-                     className="rounded-lg"
-                     alt={index}
-                  />
-               </div>
-            ))}
-         </div>
+         {imagePreview && imagePreview.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-10 gap-2 mt-3">
+               {imagePreview.map((image, index) => (
+                  <div key={index}>
+                     <Image
+                        src={image}
+                        width={100}
+                        height={100}
+                        className="rounded-lg object-cover h-[100px] w-[100px]"
+                        alt={index}
+                     />
+                  </div>
+               ))}
+            </div>
+         )}
+         {imageList && imageList.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-10 gap-2 mt-3">
+               {imageList.map((image, index) => (
+                  <div key={index}>
+                     <Image
+                        src={image?.url}
+                        width={100}
+                        height={100}
+                        className="rounded-lg object-cover h-[100px] w-[100px]"
+                        alt={index}
+                     />
+                  </div>
+               ))}
+            </div>
+         )}
       </div>
    );
 };
