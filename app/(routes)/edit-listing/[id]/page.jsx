@@ -20,6 +20,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import FileUpload from "../_components/FileUpload";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const EditListing = ({ params }) => {
    const { toast } = useToast();
@@ -87,7 +98,7 @@ const EditListing = ({ params }) => {
          if (data) {
             toast({
                title: "Success !",
-               description: "Listing updated and published !",
+               description: "Listing has been updated !",
             });
          }
 
@@ -129,6 +140,23 @@ const EditListing = ({ params }) => {
             title: "Error",
             description: "Failed to update listing. Please try again.",
             variant: "destructive",
+         });
+      }
+   };
+
+   const publishButtonHandler = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+         .from("listing")
+         .update({ active: true })
+         .eq("id", params.id)
+         .select();
+
+      if (data) {
+         setLoading(false);
+         toast({
+            title: "Success !",
+            description: "Listing has been published !",
          });
       }
    };
@@ -345,13 +373,45 @@ const EditListing = ({ params }) => {
                               "Save"
                            )}
                         </Button>
-                        <Button disabled={loading} type="submit" className="">
-                           {loading ? (
-                              <LoaderCircle className="animate-spin" />
-                           ) : (
-                              "Save & Publish"
-                           )}
-                        </Button>
+
+                        <AlertDialog>
+                           <AlertDialogTrigger asChild>
+                              <Button
+                                 disabled={loading}
+                                 type="button"
+                                 className=""
+                              >
+                                 {loading ? (
+                                    <LoaderCircle className="animate-spin" />
+                                 ) : (
+                                    "Save & Publish"
+                                 )}
+                              </Button>
+                           </AlertDialogTrigger>
+                           <AlertDialogContent>
+                              <AlertDialogHeader>
+                                 <AlertDialogTitle>
+                                    Are you ready to publish this property ?
+                                 </AlertDialogTitle>
+                                 <AlertDialogDescription>
+                                    Do you really want to publish this property
+                                    listing ?
+                                 </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                 <AlertDialogAction
+                                    onClick={() => publishButtonHandler()}
+                                 >
+                                    {loading ? (
+                                       <LoaderCircle className="animate-spin" />
+                                    ) : (
+                                       "Publish"
+                                    )}
+                                 </AlertDialogAction>
+                              </AlertDialogFooter>
+                           </AlertDialogContent>
+                        </AlertDialog>
                      </div>
                   </div>
                </form>
