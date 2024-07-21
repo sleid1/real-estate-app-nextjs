@@ -3,6 +3,7 @@ import Image from "next/image";
 import GoogleAddressSearch from "./GoogleAddressSearch";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import FilterSearch from "./FilterSearch";
 
 const Listing = ({
    listing,
@@ -10,6 +11,10 @@ const Listing = ({
    searchAddress,
    isSearched,
    isLoading,
+   setBedCount,
+   setBathCount,
+   setParkingCount,
+   setHomeType,
 }) => {
    const [address, setAddress] = useState("");
 
@@ -23,11 +28,18 @@ const Listing = ({
                }}
                setCoordinates={(v) => console.log(v)}
             />
+
             <Button className="flex gap-2" onClick={handleSearchClick}>
                <Search className="w-4 h-4" />
                Search
             </Button>
          </div>
+         <FilterSearch
+            setBedCount={setBedCount}
+            setBathCount={setBathCount}
+            setParkingCount={setParkingCount}
+            setHomeType={setHomeType}
+         />
          {isSearched && address && (
             <div className="px-3 my-5">
                <h2 className="text-xl">
