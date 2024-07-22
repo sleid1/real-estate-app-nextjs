@@ -1,4 +1,4 @@
-import { Bath, BedDouble, MapPin, Ruler, Search } from "lucide-react";
+import { Bath, BedDouble, Map, MapPin, Ruler, Search } from "lucide-react";
 import Image from "next/image";
 import GoogleAddressSearch from "./GoogleAddressSearch";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ const Listing = ({
    setBathCount,
    setParkingCount,
    setHomeType,
+   setCoordinates,
+   toggleMapVisibility,
 }) => {
    const [address, setAddress] = useState("");
 
@@ -26,7 +28,7 @@ const Listing = ({
                   searchAddress(v);
                   setAddress(v);
                }}
-               setCoordinates={(v) => console.log(v)}
+               setCoordinates={setCoordinates}
             />
 
             <Button className="flex gap-2" onClick={handleSearchClick}>
@@ -34,12 +36,22 @@ const Listing = ({
                Search
             </Button>
          </div>
+
          <FilterSearch
             setBedCount={setBedCount}
             setBathCount={setBathCount}
             setParkingCount={setParkingCount}
             setHomeType={setHomeType}
          />
+
+         <Button
+            className="w-full my-4 flex gap-2 md:hidden"
+            onClick={toggleMapVisibility}
+         >
+            <Map className="w-4 h-4" />
+            Map
+         </Button>
+
          {isSearched && address && (
             <div className="px-3 my-5">
                <h2 className="text-xl">
@@ -66,7 +78,7 @@ const Listing = ({
                  listing.map((item, index) => (
                     <div
                        key={index}
-                       className="p-3 hover:border border-primary cursor-pointer rounded-lg"
+                       className="p-3 hover:border border-primary rounded-lg cursor-pointer "
                     >
                        <Image
                           alt={item?.name}
@@ -90,6 +102,7 @@ const Listing = ({
                                 <Bath className="h-4 w-4" />
                                 {item?.bathroom}
                              </h2>
+
                              <h2 className="flex gap-2 text-sm bg-slate-200 rounded-md p-2 w-full text-gray-500 justify-center items-center">
                                 <Ruler className="h-4 w-4" />
                                 {item?.area}

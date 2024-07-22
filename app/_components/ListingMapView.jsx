@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import Listing from "./Listing";
 import { supabase } from "@/utils/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import GoogleMapSection from "./GoogleMapSection";
+import { Button } from "@/components/ui/button";
+import { CircleX, Map } from "lucide-react";
 
 const ListingMapView = ({ type }) => {
    const { toast } = useToast();
@@ -17,6 +20,29 @@ const ListingMapView = ({ type }) => {
    const [bathCount, setBathCount] = useState(0);
    const [parkingCount, setParkingCount] = useState(0);
    const [homeType, setHomeType] = useState("");
+   const [coordinates, setCoordinates] = useState("");
+   const [isMapVisible, setIsMapVisible] = useState(false);
+
+   useEffect(() => {
+      const updateMapVisibility = () => {
+         if (window.innerWidth >= 768) {
+            setIsMapVisible(true);
+         } else {
+            setIsMapVisible(false);
+         }
+      };
+
+      // Set initial state
+      updateMapVisibility();
+
+      // Add event listener
+      window.addEventListener("resize", updateMapVisibility);
+
+      // Cleanup event listener
+      return () => {
+         window.removeEventListener("resize", updateMapVisibility);
+      };
+   }, []);
 
    useEffect(() => {
       getAllListings();
@@ -87,8 +113,12 @@ const ListingMapView = ({ type }) => {
       setIsSearched(true);
    };
 
+   const toggleMapVisibility = () => {
+      setIsMapVisible(!isMapVisible);
+   };
+
    return (
-      <div className="grid grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ">
          <div>
             <Listing
                listing={listing}
@@ -100,9 +130,26 @@ const ListingMapView = ({ type }) => {
                setBathCount={setBathCount}
                setParkingCount={setParkingCount}
                setHomeType={setHomeType}
+               setCoordinates={setCoordinates}
+               toggleMapVisibility={toggleMapVisibility}
             />
          </div>
-         <div>Map</div>
+         <div
+            className={`fixed inset-5 transition-opacity duration-500 ${
+               isMapVisible
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
+            } top-24 md:relative md:top-0`}
+         >
+            <Button
+               className="flex gap-2 absolute top-3 right-2 z-50 md:hidden"
+               onClick={toggleMapVisibility}
+            >
+               <CircleX />
+               Close
+            </Button>
+            <GoogleMapSection coordinates={coordinates} listings={listing} />
+         </div>
       </div>
    );
 };
