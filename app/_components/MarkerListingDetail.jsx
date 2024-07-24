@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Bath, BedDouble, MapPin, Ruler, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const MarkerListingDetail = ({ item, closeHandler }) => {
    return (
@@ -37,7 +38,11 @@ const MarkerListingDetail = ({ item, closeHandler }) => {
                      {item?.area}
                   </h2>
                </div>
-               <Button size="sm">View Detail</Button>
+               <Link href={`/view-listing/${item.id}`}>
+                  <Button size="sm" className="w-full">
+                     View Detail
+                  </Button>
+               </Link>
             </div>
          </div>
       </div>

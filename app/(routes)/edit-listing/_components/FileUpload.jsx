@@ -6,12 +6,13 @@ const FileUpload = ({ setImages, imageList }) => {
 
    const handleFileUpload = (e) => {
       const files = e.target.files;
+      console.log(files);
       setImages(files);
       const previews = Array.from(files).map((file) =>
          URL.createObjectURL(file)
       );
 
-      setImagePreview(previews);
+      setImagePreview((oldValue) => [...oldValue, ...previews]);
    };
 
    return (

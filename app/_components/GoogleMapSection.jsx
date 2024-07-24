@@ -6,7 +6,8 @@ import { CircleX } from "lucide-react";
 
 const containerStyle = {
    width: "100%",
-   height: "100%",
+   height: "80vh",
+   borderRadius: 10,
 };
 
 function GoogleMapSection({ coordinates, listings }) {
@@ -42,9 +43,10 @@ function GoogleMapSection({ coordinates, listings }) {
       <GoogleMap
          mapContainerStyle={containerStyle}
          center={center}
-         zoom={12}
+         zoom={10}
          onLoad={onLoad}
          onUnmount={onUnmount}
+         gestureHandling="greedy"
       >
          {/* Child components, such as markers, info windows, etc. */}
          {listings.map((listing, index) => (

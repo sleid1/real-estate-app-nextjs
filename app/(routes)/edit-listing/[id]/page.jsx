@@ -179,6 +179,8 @@ const EditListing = ({ params }) => {
             initialValues={{
                type: listing.type,
                propertyType: listing.propertyType,
+               profileImage: user?.imageUrl,
+               fullName: user?.fullName,
             }}
             onSubmit={(values) => {
                console.log(values);
