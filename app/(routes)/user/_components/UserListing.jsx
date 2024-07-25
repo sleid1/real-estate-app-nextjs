@@ -29,7 +29,6 @@ const UserListing = () => {
 
       if (data) {
          setListing(data);
-         console.log(data);
       }
    };
 
