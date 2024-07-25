@@ -82,6 +82,7 @@ function Details({ listingDetail }) {
                <GoogleMapSection
                   coordinates={listingDetail.coordinates}
                   listings={[listingDetail]}
+                  gestureHandling="greedy"
                />
             </div>
             <div>

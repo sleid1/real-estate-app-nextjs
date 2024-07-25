@@ -1,11 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuItem,
+   DropdownMenuLabel,
+   DropdownMenuSeparator,
+   DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
    const path = usePathname();
@@ -28,9 +37,15 @@ const Header = () => {
                   </li>
                </Link>
 
-               <li className="hover:text-primary font-medium text-sm cursor-pointer">
-                  For Rent
-               </li>
+               <Link href={"/rent"}>
+                  <li
+                     className={`hover:text-primary font-medium text-sm cursor-pointer ${
+                        path == "/rent" && "text-primary"
+                     }`}
+                  >
+                     For Rent
+                  </li>
+               </Link>
                <li className="hover:text-primary font-medium text-sm cursor-pointer">
                   Agent Finder
                </li>
@@ -45,7 +60,30 @@ const Header = () => {
             </Link>
 
             {isSignedIn ? (
-               <UserButton />
+               <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                     <Image
+                        src={user?.imageUrl}
+                        width={35}
+                        height={35}
+                        alt="user profile"
+                        className="rounded-full"
+                     />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                     <DropdownMenuSeparator />
+                     <DropdownMenuItem>
+                        <Link href={"/user"}>My Profile</Link>
+                     </DropdownMenuItem>
+                     <DropdownMenuItem>
+                        <Link href={"/user/my-listing"}>My Listings</Link>
+                     </DropdownMenuItem>
+                     <DropdownMenuItem>
+                        <SignOutButton />
+                     </DropdownMenuItem>
+                  </DropdownMenuContent>
+               </DropdownMenu>
             ) : (
                <Link href={"/sign-in"}>
                   <Button variant="outline">Login</Button>

@@ -376,44 +376,48 @@ const EditListing = ({ params }) => {
                            )}
                         </Button>
 
-                        <AlertDialog>
-                           <AlertDialogTrigger asChild>
-                              <Button
-                                 disabled={loading}
-                                 type="button"
-                                 className=""
-                              >
-                                 {loading ? (
-                                    <LoaderCircle className="animate-spin" />
-                                 ) : (
-                                    "Save & Publish"
-                                 )}
-                              </Button>
-                           </AlertDialogTrigger>
-                           <AlertDialogContent>
-                              <AlertDialogHeader>
-                                 <AlertDialogTitle>
-                                    Are you ready to publish this property ?
-                                 </AlertDialogTitle>
-                                 <AlertDialogDescription>
-                                    Do you really want to publish this property
-                                    listing ?
-                                 </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                 <AlertDialogAction
-                                    onClick={() => publishButtonHandler()}
+                        {!listing.active && (
+                           <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                 <Button
+                                    disabled={loading}
+                                    type="button"
+                                    className=""
                                  >
                                     {loading ? (
                                        <LoaderCircle className="animate-spin" />
                                     ) : (
-                                       "Publish"
+                                       "Save & Publish"
                                     )}
-                                 </AlertDialogAction>
-                              </AlertDialogFooter>
-                           </AlertDialogContent>
-                        </AlertDialog>
+                                 </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                 <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                       Are you ready to publish this property ?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                       Do you really want to publish this
+                                       property listing ?
+                                    </AlertDialogDescription>
+                                 </AlertDialogHeader>
+                                 <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                       Cancel
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                       onClick={() => publishButtonHandler()}
+                                    >
+                                       {loading ? (
+                                          <LoaderCircle className="animate-spin" />
+                                       ) : (
+                                          "Publish"
+                                       )}
+                                    </AlertDialogAction>
+                                 </AlertDialogFooter>
+                              </AlertDialogContent>
+                           </AlertDialog>
+                        )}
                      </div>
                   </div>
                </form>
